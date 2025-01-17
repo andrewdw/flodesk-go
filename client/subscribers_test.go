@@ -7,6 +7,9 @@ import (
 
 // TestListSubscribers tests the ListSubscribers function.
 func TestListSubscribers(t *testing.T) {
+	status := "active"
+	segmentID := "123"
+
 	expected := &ListSubscribersResponse{
 		Meta: PaginationMeta{
 			Page:       1,
@@ -26,7 +29,7 @@ func TestListSubscribers(t *testing.T) {
 	server, client := setupTestServer(t, "/subscribers", expected)
 	defer server.Close()
 
-	response, err := client.ListSubscribers(1, 20, "active", "")
+	response, err := client.ListSubscribers(1, 20, &status, &segmentID)
 	if err != nil {
 		t.Fatalf("ListSubscribers returned error: %v", err)
 	}

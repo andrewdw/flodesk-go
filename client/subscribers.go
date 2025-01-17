@@ -8,7 +8,7 @@ import (
 )
 
 // ListSubscribers returns a list of subscribers.
-func (c *Client) ListSubscribers(page, perPage int, status, segmentID string) (*ListSubscribersResponse, error) {
+func (c *Client) ListSubscribers(page, perPage int, status, segmentID *string) (*ListSubscribersResponse, error) {
 	query := url.Values{}
 	if page > 0 {
 		query.Add("page", strconv.Itoa(page))
@@ -16,11 +16,11 @@ func (c *Client) ListSubscribers(page, perPage int, status, segmentID string) (*
 	if perPage > 0 {
 		query.Add("per_page", strconv.Itoa(perPage))
 	}
-	if status != "" {
-		query.Add("status", status)
+	if status != nil && *status != "" {
+		query.Add("status", *status)
 	}
-	if segmentID != "" {
-		query.Add("segment_id", segmentID)
+	if segmentID != nil && *segmentID != "" {
+		query.Add("segment_id", *segmentID)
 	}
 
 	path := "/subscribers"
@@ -74,7 +74,6 @@ func (c *Client) GetSubscriber(idOrEmail string) (*Subscriber, error) {
 	return &response, nil
 }
 
-// RemoveFromSegments removes a subscriber from one or more segments.
 func (c *Client) RemoveFromSegments(idOrEmail string, segmentIDs []string) (*Subscriber, error) {
 	body := struct {
 		SegmentIDs []string `json:"segment_ids"`
@@ -96,7 +95,6 @@ func (c *Client) RemoveFromSegments(idOrEmail string, segmentIDs []string) (*Sub
 	return &response, nil
 }
 
-// AddToSegments adds a subscriber to one or more segments.
 func (c *Client) AddToSegments(idOrEmail string, segmentIDs []string) (*Subscriber, error) {
 	body := struct {
 		SegmentIDs []string `json:"segment_ids"`
@@ -118,7 +116,6 @@ func (c *Client) AddToSegments(idOrEmail string, segmentIDs []string) (*Subscrib
 	return &response, nil
 }
 
-// UnsubscribeFromAll unsubscribes a subscriber from all segments.
 func (c *Client) UnsubscribeFromAll(idOrEmail string) (*Subscriber, error) {
 	req, err := c.newRequest(http.MethodPost, fmt.Sprintf("/subscribers/%s/unsubscribe", idOrEmail), nil)
 	if err != nil {
